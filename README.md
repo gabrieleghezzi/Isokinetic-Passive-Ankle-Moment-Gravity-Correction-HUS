@@ -1,5 +1,3 @@
-# Isokinetic Passive Ankle Moment Gravity Correction HUS
-
 # Description
 MATLAB code for computing passive ankle plantarflexor moment from isokinetic 
 dynamometer data, including gravitational moment correction via regression on 

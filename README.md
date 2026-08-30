@@ -8,14 +8,14 @@ Motion Laboratory, New Children's Hospital, Helsinki.
 
 ## Repository Contents
 
-- `Passive_Moment_Gravity_Correction.mlx` — MATLAB Live Script for passive 
+- `GravityOnlyRegion.mlx` — MATLAB Live Script for passive 
   moment analysis:
   - Signal filtering and ankle angle/torque extraction from raw dynamometer data
   - Cyclic averaging across repeated trials
   - Cubic polynomial fit and identification of the Gravity-Only Region (GOR)
   - Sinusoidal regression to estimate the gravitational moment component
   - Gravity-corrected passive elastic moment calculation
-- `Passive_Moment_Gravity_Correction.html` — Rendered output (code, results, plots)
+- `GravityOnlyRegion.html` — Rendered output (code, results, plots)
 
 ## Analysis Overview
 
@@ -37,10 +37,14 @@ The script:
 ## How to Run
 
 1. Download or clone this repository.
-2. Open `Passive_Moment_Gravity_Correction.mlx` in MATLAB.
-3. Ensure the required raw dynamometer data file is available (see repository "IKD-ID-Ankle-Torque-Validation-HUS").
+2. Open `GravityOnlyRegion.mlx` in MATLAB.
+3. Update the file path in the `readtable` line to point to where you've saved 
+   `Max_passive_contrex.csv` on your machine:
+```matlab
+   Passive_Contrex_Max = readtable('YOUR_PATH_HERE\Max_passive_contrex.csv');
+```
 4. Run the script section by section to reproduce the passive moment curve, 
-   GOR identification and gravity-corrected output.
+   GOR identification, and gravity-corrected output.
 
-Alternatively, open `Passive_Moment_Gravity_Correction.html` to view the 
+Alternatively, open `GravityOnlyRegion.html` to view the 
 rendered output without running MATLAB.

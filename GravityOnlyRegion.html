@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,IE=9,chrome=1"><meta name="generator" content="MATLAB 2026a"><style type="text/css">.rtcContent { padding: 30px; } .S0 { margin: 3px 10px 5px 4px; padding: 0px; line-height: 25px; min-height: 0px; white-space: pre; color: rgb(33, 33, 33); font-family: Helvetica, Arial, sans-serif, Helvetica, Arial, sans-serif; font-style: normal; font-size: 20px; font-weight: 700; text-align: left;  }
+._richTextNode {white-space: break-spaces;}
+.CodeBlock { background-color: #F5F5F5; margin: 10px 0 10px 0; }
+.S1 { border-left: 0.8px solid rgb(217, 217, 217); border-right: 0.8px solid rgb(217, 217, 217); border-top: 0.8px solid rgb(217, 217, 217); border-bottom: 0px none rgb(33, 33, 33); border-radius: 4px 4px 0px 0px; padding: 6px 45px 0px 13px; line-height: 18.004px; min-height: 0px; white-space: nowrap; color: rgb(33, 33, 33); font-family: Menlo, Monaco, Consolas, "Courier New", monospace, Menlo, Monaco, Consolas, "Courier New", monospace; font-size: 14px;  }
+.S2 { border-left: 0.8px solid rgb(217, 217, 217); border-right: 0.8px solid rgb(217, 217, 217); border-top: 0px none rgb(33, 33, 33); border-bottom: 0px none rgb(33, 33, 33); border-radius: 0px; padding: 0px 45px 0px 13px; line-height: 18.004px; min-height: 0px; white-space: nowrap; color: rgb(33, 33, 33); font-family: Menlo, Monaco, Consolas, "Courier New", monospace, Menlo, Monaco, Consolas, "Courier New", monospace; font-size: 14px;  }
+.S3 { border-left: 0.8px solid rgb(217, 217, 217); border-right: 0.8px solid rgb(217, 217, 217); border-top: 0px none rgb(33, 33, 33); border-bottom: 0.8px solid rgb(217, 217, 217); border-radius: 0px 0px 4px 4px; padding: 0px 45px 4px 13px; line-height: 18.004px; min-height: 0px; white-space: nowrap; color: rgb(33, 33, 33); font-family: Menlo, Monaco, Consolas, "Courier New", monospace, Menlo, Monaco, Consolas, "Courier New", monospace; font-size: 14px;  }</style></head><body><div class = rtcContent><h2  class = 'S0'><span class="_richTextNode">GRAVITATIONAL COMPONENT REMOVAL</span></h2><div class="CodeBlock"><div class="inlineWrapper"><div  class = 'S1'><span style="white-space: pre"><span >Passive_Contrex_Max=readtable(</span><span style="color: rgb(167, 9, 245);">'C:\Users\gabri\OneDrive\Desktop\HUS\Max_passive_contrex.csv'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >AnkleAngle_dynamo_Max=Passive_Contrex_Max{62767:end,5};</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >AnkleAngle_dynamo_Max=AnkleAngle_dynamo_Max-AnkleAngle_dynamo_Max(1);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >Torque_dynamo_Max_original=Passive_Contrex_Max{2:62761,21};</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span style="color: rgb(0, 128, 19);">% FILTERING LP 5 Hz</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >low_pass_cutoff = 5; </span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >nyq_f = 1500 / 2;  </span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >lpWn = low_pass_cutoff / nyq_f;  </span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >order = 4;</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >[bpB, bpA] = butter(order, lpWn, </span><span style="color: rgb(167, 9, 245);">'low'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >Torque_dynamo_filt_Max = filtfilt(bpB, bpA, Torque_dynamo_Max_original); </span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >Torque_dynamo_Max=zeros(length(AnkleAngle_dynamo_Max),1);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span style="color: rgb(14, 0, 255);">for </span><span >i = 1:length(AnkleAngle_dynamo_Max)</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >    idx_start = (i-1)*15 + 1;</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >    idx_end   = i*15;</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >    Torque_dynamo_Max (i) = mean(Torque_dynamo_filt_Max(idx_start:idx_end));</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span style="color: rgb(14, 0, 255);">end</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span style="color: rgb(0, 128, 19);">% --- Plot Torque vs Ankle Angle ---</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >figure; hold </span><span style="color: rgb(167, 9, 245);">on</span><span >; grid </span><span style="color: rgb(167, 9, 245);">on</span><span >;</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >plot(AnkleAngle_dynamo_Max, Torque_dynamo_Max, </span><span style="color: rgb(167, 9, 245);">'k'</span><span >, </span><span style="color: rgb(167, 9, 245);">'LineWidth'</span><span >, 1.5);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >xlabel(</span><span style="color: rgb(167, 9, 245);">'Ankle angle [°]'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >ylabel(</span><span style="color: rgb(167, 9, 245);">'Torque [Nm]'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >title(</span><span style="color: rgb(167, 9, 245);">'Torque vs Ankle Angle (dynamometer)'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >AnkleAngle_dynamo_Max_1=AnkleAngle_dynamo_Max(190:1390);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >Torque_dynamo_Max_1=Torque_dynamo_Max(190:1390);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >AnkleAngle_dynamo_Max_2=AnkleAngle_dynamo_Max(1390:2590);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >Torque_dynamo_Max_2=Torque_dynamo_Max(1390:2590);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >AnkleAngle_dynamo_Max_3=AnkleAngle_dynamo_Max(2590:3790);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >Torque_dynamo_Max_3=Torque_dynamo_Max(2590:3790);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >AnkleAngle_dynamo_Max_all = [AnkleAngle_dynamo_Max_1, AnkleAngle_dynamo_Max_2, AnkleAngle_dynamo_Max_3];</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >Torque_dynamo_Max_all = [Torque_dynamo_Max_1, Torque_dynamo_Max_2, Torque_dynamo_Max_3];</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >Mean_AnkleAngle_dynamo_Max = mean(AnkleAngle_dynamo_Max_all, 2);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >Mean_Torque_dynamo_Max = mean(Torque_dynamo_Max_all, 2);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span style="color: rgb(0, 128, 19);">% CUBIC POLYNOMIAL FIT</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >p_Max = polyfit(Mean_AnkleAngle_dynamo_Max, Mean_Torque_dynamo_Max, 3);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >a1_Max = p_Max(1);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >a2_Max = p_Max(2);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >a3_Max = p_Max(3);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >a4_Max = p_Max(4);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >F_poly_Max = [a1_Max, a2_Max, (6*a1_Max + a3_Max), (2*a2_Max + a4_Max)];</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >roots_F_Max = roots(F_poly_Max);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >ROM_min_Max = min(Mean_AnkleAngle_dynamo_Max);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >ROM_max_Max = max(Mean_AnkleAngle_dynamo_Max);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >GOR_center_Max=roots_F_Max(3);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >ROM_length_Max=ROM_max_Max-ROM_min_Max;</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >GOR_span_Max=0.4*ROM_length_Max;</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >GOR_min_Max=GOR_center_Max-GOR_span_Max/2;</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >GOR_max_Max=GOR_center_Max+GOR_span_Max/2;</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span style="color: rgb(0, 128, 19);">% --- 1. Data isolation within the GOR ---</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >idx_GOR_Max = Mean_AnkleAngle_dynamo_Max &gt;= GOR_min_Max &amp; Mean_AnkleAngle_dynamo_Max &lt;= GOR_max_Max;</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >theta_GOR_Max = Mean_AnkleAngle_dynamo_Max(idx_GOR_Max);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >Torque_GOR_Max = Mean_Torque_dynamo_Max(idx_GOR_Max);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >theta_rad_Max = deg2rad(theta_GOR_Max);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span style="color: rgb(0, 128, 19);">% --- 3. Regression Matrix ---</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >X_Max = [sin(theta_rad_Max), cos(theta_rad_Max)];</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >A_Max = X_Max \ Torque_GOR_Max;       </span><span style="color: rgb(0, 128, 19);">% LS Solution</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >A1_Max = A_Max(1);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >A2_Max = A_Max(2);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >MG_Max=A1_Max*sin(theta_rad_Max)+A2_Max*cos(theta_rad_Max);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >figure; </span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >hold </span><span style="color: rgb(167, 9, 245);">on</span><span >; </span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >grid </span><span style="color: rgb(167, 9, 245);">on</span><span >;</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span style="color: rgb(0, 128, 19);">% --- 1. Passive Curve (</span><span style="color: rgb(0, 128, 19);">grey</span><span style="color: rgb(0, 128, 19);">) ---</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >plot(Mean_AnkleAngle_dynamo_Max, Mean_Torque_dynamo_Max, </span><span style="color: rgb(14, 0, 255);">...</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >    </span><span style="color: rgb(167, 9, 245);">'Color'</span><span >, [0.6 0.6 0.6], </span><span style="color: rgb(167, 9, 245);">'LineWidth'</span><span >, 1.5);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span style="color: rgb(0, 128, 19);">% --- 2. GOR (black) ---</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >plot(theta_GOR_Max, Torque_GOR_Max, </span><span style="color: rgb(167, 9, 245);">'k'</span><span >, </span><span style="color: rgb(167, 9, 245);">'LineWidth'</span><span >, 2);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span style="color: rgb(0, 128, 19);">% --- 3. Gravitational Moment Fit --&gt; Entire ROM </span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >theta_full_rad_Max = deg2rad(Mean_AnkleAngle_dynamo_Max);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >MG_full_Max = A1_Max .* sin(theta_full_rad_Max) + A2_Max .* cos(theta_full_rad_Max);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >plot(Mean_AnkleAngle_dynamo_Max, MG_full_Max, </span><span style="color: rgb(167, 9, 245);">'--k'</span><span >, </span><span style="color: rgb(167, 9, 245);">'LineWidth'</span><span >, 2);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >plot(GOR_center_Max, A1_Max*sin(deg2rad(GOR_center_Max)) + A2_Max*cos(deg2rad(GOR_center_Max)),</span><span style="color: rgb(14, 0, 255);">...</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >    </span><span style="color: rgb(167, 9, 245);">'rs'</span><span >, </span><span style="color: rgb(167, 9, 245);">'MarkerFaceColor'</span><span >, </span><span style="color: rgb(167, 9, 245);">'r'</span><span >, </span><span style="color: rgb(167, 9, 245);">'MarkerSize'</span><span >, 8);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >xlabel(</span><span style="color: rgb(167, 9, 245);">'Ankle Angle [°]'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >ylabel(</span><span style="color: rgb(167, 9, 245);">'Torque [Nm]'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >title(</span><span style="color: rgb(167, 9, 245);">'Passive Moment, GOR and Gravitational Moment Fit'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >legend(</span><span style="color: rgb(167, 9, 245);">'Passive Moment Data'</span><span >, </span><span style="color: rgb(14, 0, 255);">...</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >    </span><span style="color: rgb(167, 9, 245);">'Gravity Only Region'</span><span >, </span><span style="color: rgb(14, 0, 255);">...</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >    </span><span style="color: rgb(167, 9, 245);">'Gravitational Moment Fit'</span><span >, </span><span style="color: rgb(14, 0, 255);">...</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >    </span><span style="color: rgb(167, 9, 245);">'GOR Center'</span><span >, </span><span style="color: rgb(14, 0, 255);">...</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >    </span><span style="color: rgb(167, 9, 245);">'Location'</span><span >, </span><span style="color: rgb(167, 9, 245);">'best'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >hold </span><span style="color: rgb(167, 9, 245);">off</span><span >;</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >MPE_full_Max = Mean_Torque_dynamo_Max - MG_full_Max;</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >Torque_at_GOR_Max = - 0.0717983;</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >Torque_shifted_Max = Mean_Torque_dynamo_Max - Torque_at_GOR_Max;</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'>&nbsp;</div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span style="color: rgb(0, 128, 19);">% --- Plot Torque vs Ankle Angle ---</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >figure; </span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >hold </span><span style="color: rgb(167, 9, 245);">on</span><span >;</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >grid </span><span style="color: rgb(167, 9, 245);">on</span><span >;</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >plot(Mean_AnkleAngle_dynamo_Max, Torque_shifted_Max, </span><span style="color: rgb(167, 9, 245);">'k'</span><span >, </span><span style="color: rgb(167, 9, 245);">'LineWidth'</span><span >, 1.5); </span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >plot(Mean_AnkleAngle_dynamo_Max, MPE_full_Max, </span><span style="color: rgb(167, 9, 245);">'r'</span><span >, </span><span style="color: rgb(167, 9, 245);">'LineWidth'</span><span >, 1.5); </span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >xlabel(</span><span style="color: rgb(167, 9, 245);">'Ankle angle [°]'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >ylabel(</span><span style="color: rgb(167, 9, 245);">'Torque [Nm]'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >title(</span><span style="color: rgb(167, 9, 245);">'Torque vs Ankle Angle (dynamometer)'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >legend(</span><span style="color: rgb(167, 9, 245);">'Passive Moment (dynamometer)'</span><span >, </span><span style="color: rgb(14, 0, 255);">...</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >    </span><span style="color: rgb(167, 9, 245);">'Passive Elastic Moment (gravity corrected)'</span><span >, </span><span style="color: rgb(14, 0, 255);">...</span></span></div></div><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >    </span><span style="color: rgb(167, 9, 245);">'Location'</span><span >, </span><span style="color: rgb(167, 9, 245);">'best'</span><span >);</span></span></div></div><div class="inlineWrapper"><div  class = 'S3'><span style="white-space: pre"><span >hold </span><span style="color: rgb(167, 9, 245);">off</span><span >;</span></span></div></div></div>
+<br>
+<!-- 
+##### SOURCE BEGIN #####
+%% GRAVITATIONAL COMPONENT REMOVAL
+
+Passive_Contrex_Max=readtable('C:\Users\gabri\OneDrive\Desktop\HUS\Max_passive_contrex.csv');
+
+AnkleAngle_dynamo_Max=Passive_Contrex_Max{62767:end,5};
+AnkleAngle_dynamo_Max=AnkleAngle_dynamo_Max-AnkleAngle_dynamo_Max(1);
+Torque_dynamo_Max_original=Passive_Contrex_Max{2:62761,21};
+
+% FILTERING LP 5 Hz
+
+low_pass_cutoff = 5; 
+nyq_f = 1500 / 2;  
+lpWn = low_pass_cutoff / nyq_f;  
+order = 4;
+[bpB, bpA] = butter(order, lpWn, 'low');
+Torque_dynamo_filt_Max = filtfilt(bpB, bpA, Torque_dynamo_Max_original); 
+
+Torque_dynamo_Max=zeros(length(AnkleAngle_dynamo_Max),1);
+for i = 1:length(AnkleAngle_dynamo_Max)
+    idx_start = (i-1)*15 + 1;
+    idx_end   = i*15;
+    Torque_dynamo_Max (i) = mean(Torque_dynamo_filt_Max(idx_start:idx_end));
+end
+
+% REPLACE_WITH_DASH_DASH- Plot Torque vs Ankle Angle REPLACE_WITH_DASH_DASH-
+figure; hold on; grid on;
+plot(AnkleAngle_dynamo_Max, Torque_dynamo_Max, 'k', 'LineWidth', 1.5);
+
+xlabel('Ankle angle [°]');
+ylabel('Torque [Nm]');
+title('Torque vs Ankle Angle (dynamometer)');
+AnkleAngle_dynamo_Max_1=AnkleAngle_dynamo_Max(190:1390);
+Torque_dynamo_Max_1=Torque_dynamo_Max(190:1390);
+AnkleAngle_dynamo_Max_2=AnkleAngle_dynamo_Max(1390:2590);
+Torque_dynamo_Max_2=Torque_dynamo_Max(1390:2590);
+AnkleAngle_dynamo_Max_3=AnkleAngle_dynamo_Max(2590:3790);
+Torque_dynamo_Max_3=Torque_dynamo_Max(2590:3790);
+
+AnkleAngle_dynamo_Max_all = [AnkleAngle_dynamo_Max_1, AnkleAngle_dynamo_Max_2, AnkleAngle_dynamo_Max_3];
+Torque_dynamo_Max_all = [Torque_dynamo_Max_1, Torque_dynamo_Max_2, Torque_dynamo_Max_3];
+
+Mean_AnkleAngle_dynamo_Max = mean(AnkleAngle_dynamo_Max_all, 2);
+Mean_Torque_dynamo_Max = mean(Torque_dynamo_Max_all, 2);
+
+% CUBIC POLYNOMIAL FIT
+p_Max = polyfit(Mean_AnkleAngle_dynamo_Max, Mean_Torque_dynamo_Max, 3);
+a1_Max = p_Max(1);
+a2_Max = p_Max(2);
+a3_Max = p_Max(3);
+a4_Max = p_Max(4);
+F_poly_Max = [a1_Max, a2_Max, (6*a1_Max + a3_Max), (2*a2_Max + a4_Max)];
+roots_F_Max = roots(F_poly_Max);
+ROM_min_Max = min(Mean_AnkleAngle_dynamo_Max);
+ROM_max_Max = max(Mean_AnkleAngle_dynamo_Max);
+GOR_center_Max=roots_F_Max(3);
+
+ROM_length_Max=ROM_max_Max-ROM_min_Max;
+GOR_span_Max=0.4*ROM_length_Max;
+GOR_min_Max=GOR_center_Max-GOR_span_Max/2;
+GOR_max_Max=GOR_center_Max+GOR_span_Max/2;
+
+% REPLACE_WITH_DASH_DASH- 1. Data isolation within the GOR REPLACE_WITH_DASH_DASH-
+idx_GOR_Max = Mean_AnkleAngle_dynamo_Max >= GOR_min_Max & Mean_AnkleAngle_dynamo_Max <= GOR_max_Max;
+
+theta_GOR_Max = Mean_AnkleAngle_dynamo_Max(idx_GOR_Max);
+Torque_GOR_Max = Mean_Torque_dynamo_Max(idx_GOR_Max);
+theta_rad_Max = deg2rad(theta_GOR_Max);
+
+% REPLACE_WITH_DASH_DASH- 3. Regression Matrix REPLACE_WITH_DASH_DASH-
+X_Max = [sin(theta_rad_Max), cos(theta_rad_Max)];
+
+A_Max = X_Max \ Torque_GOR_Max;       % LS Solution
+A1_Max = A_Max(1);
+A2_Max = A_Max(2);
+MG_Max=A1_Max*sin(theta_rad_Max)+A2_Max*cos(theta_rad_Max);
+
+figure; 
+hold on; 
+grid on;
+
+% REPLACE_WITH_DASH_DASH- 1. Passive Curve (grey) REPLACE_WITH_DASH_DASH-
+plot(Mean_AnkleAngle_dynamo_Max, Mean_Torque_dynamo_Max, ...
+    'Color', [0.6 0.6 0.6], 'LineWidth', 1.5);
+
+% REPLACE_WITH_DASH_DASH- 2. GOR (black) REPLACE_WITH_DASH_DASH-
+plot(theta_GOR_Max, Torque_GOR_Max, 'k', 'LineWidth', 2);
+
+% REPLACE_WITH_DASH_DASH- 3. Gravitational Moment Fit REPLACE_WITH_DASH_DASH> Entire ROM 
+theta_full_rad_Max = deg2rad(Mean_AnkleAngle_dynamo_Max);
+MG_full_Max = A1_Max .* sin(theta_full_rad_Max) + A2_Max .* cos(theta_full_rad_Max);
+
+plot(Mean_AnkleAngle_dynamo_Max, MG_full_Max, 'REPLACE_WITH_DASH_DASHk', 'LineWidth', 2);
+plot(GOR_center_Max, A1_Max*sin(deg2rad(GOR_center_Max)) + A2_Max*cos(deg2rad(GOR_center_Max)),...
+    'rs', 'MarkerFaceColor', 'r', 'MarkerSize', 8);
+xlabel('Ankle Angle [°]');
+ylabel('Torque [Nm]');
+title('Passive Moment, GOR and Gravitational Moment Fit');
+legend('Passive Moment Data', ...
+    'Gravity Only Region', ...
+    'Gravitational Moment Fit', ...
+    'GOR Center', ...
+    'Location', 'best');
+hold off;
+MPE_full_Max = Mean_Torque_dynamo_Max - MG_full_Max;
+
+Torque_at_GOR_Max = - 0.0717983;
+Torque_shifted_Max = Mean_Torque_dynamo_Max - Torque_at_GOR_Max;
+
+% REPLACE_WITH_DASH_DASH- Plot Torque vs Ankle Angle REPLACE_WITH_DASH_DASH-
+figure; 
+hold on;
+grid on;
+plot(Mean_AnkleAngle_dynamo_Max, Torque_shifted_Max, 'k', 'LineWidth', 1.5); 
+plot(Mean_AnkleAngle_dynamo_Max, MPE_full_Max, 'r', 'LineWidth', 1.5); 
+xlabel('Ankle angle [°]');
+ylabel('Torque [Nm]');
+title('Torque vs Ankle Angle (dynamometer)');
+legend('Passive Moment (dynamometer)', ...
+    'Passive Elastic Moment (gravity corrected)', ...
+    'Location', 'best');
+hold off;
+##### SOURCE END #####
+-->
+</div></body></html>
